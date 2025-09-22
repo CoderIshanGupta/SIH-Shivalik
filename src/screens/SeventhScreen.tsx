@@ -1,37 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { askAssistant } from '../api';
+import { useLanguage } from '../LanguageContext';
 
-const SeventhScreen = () => {
-  const handleVoicePress = () => {
-    Alert.alert('AI Assistant', 'Voice Assistant button pressed!');
-    // later you can integrate speech recognition here
+export default function SeventhScreen() {
+  const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
+
+  const handleVoicePress = async () => {
+    try {
+      setLoading(true);
+      const res = await askAssistant("When is the next bus to City Center?");
+      Alert.alert(t("assistant"), res.reply || t("noData"));
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Could not connect!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>AI Assistant</Text>
+      <Text style={styles.title}>{t("assistant")}</Text>
       <TouchableOpacity style={styles.voiceButton} onPress={handleVoicePress}>
-        <Text style={styles.voiceText}>🎤 Speak to Assistant</Text>
+        <Text style={styles.voiceText}>
+          {loading ? "…" : "🎤"}
+          {" "} {loading ? t("loading") : t("assistant")}
+        </Text>
       </TouchableOpacity>
     </View>
   );
-};
-
-export default SeventhScreen;
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 20 },
-  voiceButton: {
-    backgroundColor: '#f97316',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 30,
-  },
-  voiceText: { fontSize: 18, color: '#fff', fontWeight: '600' },
+  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" },
+  title: { fontSize: 22, fontWeight: "700", marginBottom: 20 },
+  voiceButton: { backgroundColor: "#f97316", padding: 15, paddingHorizontal: 30, borderRadius: 30 },
+  voiceText: { color: "#fff", fontSize: 18, fontWeight: "600" }
 });
