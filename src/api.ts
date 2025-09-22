@@ -3,36 +3,52 @@ import axios from "axios";
 import { BASE_URL } from "./config";
 import { Bus, BusLocation } from "./types";
 
-// Create a pre-configured axios client
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 5000,
+  timeout: 8000,
 });
 
-// ------------ Buses ------------
+// ------------ Bus APIs ------------
 export const getBuses = async (): Promise<Bus[]> => {
-  const response = await api.get<Bus[]>("/buses");
-  return response.data;
+  const res = await api.get<Bus[]>("/buses");
+  return res.data;
 };
 
 export const getBusById = async (id: string): Promise<Bus> => {
-  const response = await api.get<Bus>(`/bus/${id}`);
-  return response.data;
+  const res = await api.get<Bus>(`/bus/${id}`);
+  return res.data;
 };
 
-// ------------ Locations ------------
 export const getBusLocation = async (busId: string): Promise<BusLocation> => {
-  const response = await api.get<BusLocation>(`/bus/location/${busId}`);
-  return response.data;
+  const res = await api.get<BusLocation>(`/bus/location/${busId}`);
+  return res.data;
 };
 
 export const updateBusLocation = async (
   busId: string,
   location: { latitude: number; longitude: number }
-): Promise<any> => {
-  const response = await api.post(`/bus/location`, {
-    busId,
-    ...location,
-  });
-  return response.data;
+) => {
+  const res = await api.post(`/bus/location`, { busId, ...location });
+  return res.data;
+};
+
+// ------------ Routes / Predictions / AI ------------
+export const findRoute = async (from: string, to: string) => {
+  const res = await api.post("/findRoute", { from, to });
+  return res.data;
+};
+
+export const predictETA = async (stop: string, date: string) => {
+  const res = await api.post("/predict", { stop, date });
+  return res.data;
+};
+
+export const getRoutes = async () => {
+  const res = await api.get("/routes");
+  return res.data;
+};
+
+export const askAssistant = async (message: string) => {
+  const res = await api.post("/assistant", { message });
+  return res.data;
 };
