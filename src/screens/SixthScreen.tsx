@@ -126,68 +126,40 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  Alert,
+  View, Text, TouchableOpacity,
+  StyleSheet, FlatList, Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BottomNav from '../components/BottomNav';
+import { getRoutes } from '../api';
+import { useLanguage } from '../LanguageContext';
 
 type RouteItem = {
   stop: string;
   routes: { id: string; eta: string }[];
 };
 
-const SixthScreen = () => {
+export default function SixthScreen() {
   const [routes, setRoutes] = useState<RouteItem[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
-  useEffect(() => {
-    loadOfflineRoutes();
-  }, []);
+  useEffect(() => { loadOfflineRoutes(); }, []);
 
-  const fetchRoutes = async () => {
+  const fetchRoutesData = async () => {
     try {
       setLoading(true);
-      // Dummy data until API connected
-      const fakeData: RouteItem[] = [
-        {
-          stop: 'City Hospital Stop',
-          routes: [
-            { id: '5C', eta: '4 min' },
-            { id: '9C', eta: '14 min' },
-          ],
-        },
-        {
-          stop: 'Railway Station Circle',
-          routes: [
-            { id: '8B', eta: '7 min' },
-            { id: '21B', eta: '19 min' },
-          ],
-        },
-        {
-          stop: 'Market Square',
-          routes: [
-            { id: '10B', eta: '11 min' },
-            { id: '15A', eta: '20 min' },
-          ],
-        },
-      ];
-
-      await AsyncStorage.setItem('offlineRoutes', JSON.stringify(fakeData));
+      const data = await getRoutes();
+      await AsyncStorage.setItem('offlineRoutes', JSON.stringify(data));
       const now = new Date().toLocaleTimeString();
       await AsyncStorage.setItem('lastUpdated', now);
 
-      setRoutes(fakeData);
+      setRoutes(data);
       setLastUpdated(now);
-
-      Alert.alert('Saved', 'Routes are updated for offline use.');
+      Alert.alert("✅", t("offline"));
     } catch (err) {
-      Alert.alert('Error', 'Failed to fetch routes.');
+      console.error(err);
+      Alert.alert("Error", t("noData"));
     } finally {
       setLoading(false);
     }
@@ -200,33 +172,21 @@ const SixthScreen = () => {
       if (cached) setRoutes(JSON.parse(cached));
       if (updated) setLastUpdated(updated);
     } catch (err) {
-      console.log('Error loading offline data', err);
+      console.warn("Error loading offline routes", err);
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Top orange bar */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Offline Routes</Text>
-      </View>
+      <View style={styles.header}><Text style={styles.headerText}>{t("offline")}</Text></View>
 
-      {/* Offline button */}
-      <TouchableOpacity style={styles.offlineBtn} onPress={fetchRoutes}>
+      <TouchableOpacity style={styles.offlineBtn} onPress={fetchRoutesData}>
         <Text style={styles.offlineText}>
-          {loading ? 'Updating…' : 'Offline Mode'}
+          {loading ? t("loading") : t("offline")}
         </Text>
       </TouchableOpacity>
 
-      {/* Connectivity card */}
-      <View style={styles.connectivityCard}>
-        <Text style={styles.connectivityTitle}>Limited Connectivity</Text>
-        <Text style={styles.connectivitySub}>Delayed Updates</Text>
-      </View>
-
-      {/* Nearby Stops */}
       <View style={styles.stopsCard}>
-        <Text style={styles.stopsTitle}>📍 Nearby Stops</Text>
         <FlatList
           data={routes}
           keyExtractor={(item, idx) => idx.toString()}
@@ -240,74 +200,28 @@ const SixthScreen = () => {
               ))}
             </View>
           )}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No offline data yet.</Text>
-          }
+          ListEmptyComponent={<Text style={styles.emptyText}>{t("noData")}</Text>}
         />
         {lastUpdated && (
-          <View style={styles.updatedBadge}>
-            <Text style={styles.updatedText}>Last updated: {lastUpdated}</Text>
-          </View>
+          <Text style={styles.updatedText}>{t("lastUpdated")}: {lastUpdated}</Text>
         )}
       </View>
-
-      {/* ✅ Only ONE BottomNav here */}
     </View>
   );
-};
-
-export default SixthScreen;
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  header: {
-    height: 60,
-    backgroundColor: '#d97706',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerText: { color: '#fff', fontWeight: '700', fontSize: 18 },
-
-  offlineBtn: {
-    backgroundColor: '#f97316',
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    alignSelf: 'flex-start',
-    margin: 20,
-  },
-  offlineText: { color: '#fff', fontWeight: '700' },
-
-  connectivityCard: {
-    backgroundColor: '#f1f1f1',
-    padding: 20,
-    marginHorizontal: 20,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  connectivityTitle: { fontWeight: '700', fontSize: 16 },
-  connectivitySub: { fontSize: 12, color: '#777', marginTop: 4 },
-
-  stopsCard: {
-    flex: 1,
-    backgroundColor: '#fff',
-    margin: 20,
-    borderRadius: 16,
-    padding: 20,
-    elevation: 2,
-  },
-  stopsTitle: { fontSize: 16, fontWeight: '700', marginBottom: 10 },
+  header: { height: 60, backgroundColor: '#d97706',
+    justifyContent: 'center', alignItems: 'center' },
+  headerText: { color: "#fff", fontWeight: '700', fontSize: 18 },
+  offlineBtn: { backgroundColor: "#f97316", borderRadius: 20,
+    paddingHorizontal: 20, paddingVertical: 8, alignSelf: 'flex-start', margin: 20 },
+  offlineText: { color: "#fff", fontWeight: "700" },
+  stopsCard: { flex: 1, margin: 20, borderRadius: 16, padding: 20, elevation: 2 },
   stopBlock: { marginBottom: 15 },
-  stopName: { fontSize: 14, fontWeight: '600', marginBottom: 4 },
-  routeText: { fontSize: 13, color: '#444' },
-  emptyText: { textAlign: 'center', color: '#999', marginTop: 20 },
-
-  updatedBadge: {
-    marginTop: 10,
-    backgroundColor: '#f97316',
-    borderRadius: 16,
-    padding: 8,
-    alignSelf: 'center',
-  },
-  updatedText: { color: '#fff', fontSize: 12, fontWeight: '600' },
+  stopName: { fontWeight: "600", marginBottom: 4 },
+  routeText: { color: "#444" },
+  emptyText: { color: "#888", textAlign: "center", marginTop: 20 },
+  updatedText: { color: "#f97316", textAlign: "center", marginTop: 10 }
 });
