@@ -134,7 +134,7 @@ import { getRoutes } from '../api';
 import { useLanguage } from '../LanguageContext';
 
 type RouteItem = {
-  stop: string;
+  stop: string; // now contains a translation key!
   routes: { id: string; eta: string }[];
 };
 
@@ -178,7 +178,9 @@ export default function SixthScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}><Text style={styles.headerText}>{t("offline")}</Text></View>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>{t("offline")}</Text>
+      </View>
 
       <TouchableOpacity style={styles.offlineBtn} onPress={fetchRoutesData}>
         <Text style={styles.offlineText}>
@@ -192,7 +194,8 @@ export default function SixthScreen() {
           keyExtractor={(item, idx) => idx.toString()}
           renderItem={({ item }) => (
             <View style={styles.stopBlock}>
-              <Text style={styles.stopName}>{item.stop}</Text>
+              {/* ✅ Translate stop key here */}
+              <Text style={styles.stopName}>{t(item.stop as any)}</Text>
               {item.routes.map((r, i) => (
                 <Text key={i} style={styles.routeText}>
                   Route {r.id} → {r.eta}
@@ -212,13 +215,20 @@ export default function SixthScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  header: { height: 60, backgroundColor: '#d97706',
-    justifyContent: 'center', alignItems: 'center' },
+  header: {
+    height: 60, backgroundColor: '#d97706',
+    justifyContent: 'center', alignItems: 'center'
+  },
   headerText: { color: "#fff", fontWeight: '700', fontSize: 18 },
-  offlineBtn: { backgroundColor: "#f97316", borderRadius: 20,
-    paddingHorizontal: 20, paddingVertical: 8, alignSelf: 'flex-start', margin: 20 },
+  offlineBtn: {
+    backgroundColor: "#f97316", borderRadius: 20,
+    paddingHorizontal: 20, paddingVertical: 8,
+    alignSelf: 'flex-start', margin: 20
+  },
   offlineText: { color: "#fff", fontWeight: "700" },
-  stopsCard: { flex: 1, margin: 20, borderRadius: 16, padding: 20, elevation: 2 },
+  stopsCard: {
+    flex: 1, margin: 20, borderRadius: 16, padding: 20, elevation: 2
+  },
   stopBlock: { marginBottom: 15 },
   stopName: { fontWeight: "600", marginBottom: 4 },
   routeText: { color: "#444" },
