@@ -1,54 +1,92 @@
 // src/api.ts
-import axios from "axios";
-import { BASE_URL } from "./config";
 import { Bus, BusLocation } from "./types";
 
-const api = axios.create({
-  baseURL: BASE_URL,
-  timeout: 8000,
-});
+// Mock buses with stop KEYS (not language-specific text)
+const mockBuses: Bus[] = [
+  {
+    _id: "1",
+    name: "Ludhiana Express",
+    route: "ludhiana - jalandhar - phagwara",
+  },
+  {
+    _id: "2",
+    name: "Amritsar Shuttle",
+    route: "amritsar - tarnTaran - patti",
+  },
+  {
+    _id: "3",
+    name: "Patiala Flyer",
+    route: "patiala - rajpura - zirakpur",
+  },
+  {
+    _id: "4",
+    name: "Bathinda Service",
+    route: "bathinda - mansa - barnala",
+  },
+  {
+    _id: "5",
+    name: "Hoshiarpur Connector",
+    route: "hoshiarpur - phagwara - jalandhar",
+  },
+];
 
 // ------------ Bus APIs ------------
 export const getBuses = async (): Promise<Bus[]> => {
-  const res = await api.get<Bus[]>("/buses");
-  return res.data;
+  return mockBuses;
 };
 
 export const getBusById = async (id: string): Promise<Bus> => {
-  const res = await api.get<Bus>(`/bus/${id}`);
-  return res.data;
+  return mockBuses.find((b) => b._id === id) || mockBuses[0];
 };
 
 export const getBusLocation = async (busId: string): Promise<BusLocation> => {
-  const res = await api.get<BusLocation>(`/bus/location/${busId}`);
-  return res.data;
+  return {
+    busId,
+    latitude: 31.3260,
+    longitude: 75.5762,
+    timestamp: new Date().toISOString(),
+  };
 };
 
 export const updateBusLocation = async (
   busId: string,
   location: { latitude: number; longitude: number }
 ) => {
-  const res = await api.post(`/bus/location`, { busId, ...location });
-  return res.data;
+  return { success: true, busId, ...location, timestamp: new Date().toISOString() };
 };
 
 // ------------ Routes / Predictions / AI ------------
 export const findRoute = async (from: string, to: string) => {
-  const res = await api.post("/findRoute", { from, to });
-  return res.data;
+  return [
+    {
+      bus: "Ludhiana Express",
+      type: "AC Semi-Sleeper",
+      eta: "12 min",
+      price: 55,
+    },
+    {
+      bus: "Patiala Flyer",
+      type: "Ordinary",
+      eta: "20 min",
+      price: 30,
+    },
+  ];
 };
 
 export const predictETA = async (stop: string, date: string) => {
-  const res = await api.post("/predict", { stop, date });
-  return res.data;
+  return { stop, eta: "8 minutes", date };
 };
 
 export const getRoutes = async () => {
-  const res = await api.get("/routes");
-  return res.data;
+  return [
+    { stop: "ludhianaBusStand", routes: [{ id: "101", eta: "5 min" }] },
+    { stop: "amritsarGoldenGate", routes: [{ id: "201", eta: "7 min" }] },
+    { stop: "patialaSheranWalaGate", routes: [{ id: "301", eta: "10 min" }] },
+  ];
 };
 
 export const askAssistant = async (message: string) => {
-  const res = await api.post("/assistant", { message });
-  return res.data;
+  return {
+    reply: `🤖 Sat Sri Akal! You said: "${message}". Many buses run Ludhiana ↔ Jalandhar every 15 min.`,
+  };
 };
