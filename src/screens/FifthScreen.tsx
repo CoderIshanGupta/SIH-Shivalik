@@ -1,3 +1,4 @@
+// src/screens/FifthScreen.tsx
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, Image,
@@ -108,9 +109,10 @@ export default function FifthScreen() {
               keyExtractor={item => item}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.stopItem} onPress={() => {
-                  setFromStop(item); setFromVisible(false);
+                  setFromStop(t(item as any));
+                  setFromVisible(false);
                 }}>
-                  <Text style={styles.stopText}>{item}</Text>
+                  <Text style={styles.stopText}>{t(item as any)}</Text>
                 </TouchableOpacity>
               )}
             />
@@ -129,9 +131,10 @@ export default function FifthScreen() {
               keyExtractor={item => item}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.stopItem} onPress={() => {
-                  setToStop(item); setToVisible(false);
+                  setToStop(t(item as any));
+                  setToVisible(false);
                 }}>
-                  <Text style={styles.stopText}>{item}</Text>
+                  <Text style={styles.stopText}>{t(item as any)}</Text>
                 </TouchableOpacity>
               )}
             />
@@ -146,31 +149,51 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   header: { height: 20, backgroundColor: '#d97706' },
   illustration: { width: '100%', height: 160, marginTop: 10 },
-  selectCard: { flexDirection: 'row', marginHorizontal: 20, marginTop: 15,
-    backgroundColor: '#fff', borderRadius: 16, padding: 15, elevation: 4 },
+  selectCard: {
+    flexDirection: 'row', marginHorizontal: 20, marginTop: 15,
+    backgroundColor: '#fff', borderRadius: 16, padding: 15, elevation: 4
+  },
   iconText: { fontSize: 20, marginRight: 8 },
   selectText: { flex: 1, fontSize: 16, fontWeight: '600' },
   dropdownArrow: { fontSize: 20, color: '#666' },
-  findBtn: { alignSelf: 'center', marginTop: 20, backgroundColor: '#f97316',
-    borderRadius: 20, paddingHorizontal: 30, paddingVertical: 10 },
+  findBtn: {
+    alignSelf: 'center', marginTop: 20, backgroundColor: '#f97316',
+    borderRadius: 20, paddingHorizontal: 30, paddingVertical: 10
+  },
   findText: { color: '#fff', fontWeight: '700', fontSize: 16 },
-  routesCard: { backgroundColor: '#fff', margin: 20, borderRadius: 16,
-    padding: 20, elevation: 4 },
+  routesCard: {
+    backgroundColor: '#fff', margin: 20, borderRadius: 16,
+    padding: 20, elevation: 4
+  },
   routesTitle: { fontSize: 16, fontWeight: '700', marginBottom: 10 },
-  routeOption: { flexDirection: 'row', justifyContent: 'space-between',
+  routeOption: {
+    flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'center', backgroundColor: '#f97316', borderRadius: 12,
-    padding: 12, marginBottom: 12 },
+    padding: 12, marginBottom: 12
+  },
   routeLeft: { flexDirection: 'row', alignItems: 'center' },
-  busBadge: { backgroundColor: '#fff', color: '#f97316', borderRadius: 8,
-    paddingHorizontal: 6, paddingVertical: 2, marginRight: 10, fontWeight: '700' },
+  busBadge: {
+    backgroundColor: '#fff', color: '#f97316', borderRadius: 8,
+    paddingHorizontal: 6, paddingVertical: 2, marginRight: 10, fontWeight: '700'
+  },
   routeType: { color: '#fff', fontWeight: '700' },
   routeSub: { color: '#fff' },
   price: { color: '#fff', fontWeight: '700', fontSize: 16 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center', alignItems: 'center' },
-  modalContainer: { backgroundColor: '#fff', borderRadius: 16,
-    width: '80%', maxHeight: '60%', padding: 20 },
-  modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 10, textAlign: 'center' },
-  stopItem: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center', alignItems: 'center'
+  },
+  modalContainer: {
+    backgroundColor: '#fff', borderRadius: 16,
+    width: '80%', maxHeight: '60%', padding: 20
+  },
+  modalTitle: {
+    fontSize: 18, fontWeight: '700',
+    marginBottom: 10, textAlign: 'center'
+  },
+  stopItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1, borderBottomColor: '#eee'
+  },
   stopText: { fontSize: 16 }
 });
