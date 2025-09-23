@@ -10,7 +10,7 @@ export default function SeventhScreen() {
   const handleVoicePress = async () => {
     try {
       setLoading(true);
-      const res = await askAssistant("When is the next bus to City Center?");
+      const res = await askAssistant("When is the next bus to Jalandhar from Ludhiana?");
       Alert.alert(t("assistant"), res.reply || t("noData"));
     } catch (err) {
       console.error(err);
@@ -22,11 +22,12 @@ export default function SeventhScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t("assistant")}</Text>
+      {/* ✅ Correct translation key */}
+      <Text style={styles.title}>{t("aiAssistant")}</Text>
       <TouchableOpacity style={styles.voiceButton} onPress={handleVoicePress}>
         <Text style={styles.voiceText}>
-          {loading ? "…" : "🎤"}
-          {" "} {loading ? t("loading") : t("assistant")}
+          {loading ? "…" : "🎤"}{" "}
+          {loading ? t("loading") : t("pressToSpeak")}
         </Text>
       </TouchableOpacity>
     </View>
