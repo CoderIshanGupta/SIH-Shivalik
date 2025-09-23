@@ -3,6 +3,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+// 👇 import vector icons from react-native-vector-icons
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+// --- Screens ---
 import Onboarding from '../screens/Onboarding';
 import SecondScreen from '../screens/SecondScreen';
 import Welcome from '../screens/Welcome';
@@ -16,7 +21,7 @@ export type RootStackParamList = {
   Onboarding: undefined;
   Second: undefined;
   Welcome: undefined;
-  MainTabs: undefined; // 👈 Tab navigator lives inside stack
+  MainTabs: undefined;
 };
 
 export type MainTabParamList = {
@@ -29,35 +34,54 @@ export type MainTabParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-// --- Bottom Tabs with Emojis ---
+// --- Bottom Tabs with Vector Icons ---
 function MainTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: { backgroundColor: '#fff', height: 60, paddingBottom: 5 },
-        tabBarLabelStyle: { fontSize: 22 }, // emojis big
-      }}
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          height: 60,
+          paddingBottom: 6,
+        },
+        tabBarActiveTintColor: '#d97706', // active icon color
+        tabBarInactiveTintColor: '#999',  // inactive icon color
+
+        // ✅ icons logic
+        tabBarIcon: ({ color, size }) => {
+          if (route.name === 'DashboardScreen') {
+            return <Ionicons name="home" size={size} color={color} />;
+          } else if (route.name === 'FourthScreen') {
+            return <MaterialIcons name="directions-bus" size={size} color={color} />;
+          } else if (route.name === 'FifthScreen') {
+            return <Ionicons name="location-sharp" size={size} color={color} />;
+          } else if (route.name === 'SixthScreen') {
+            return <Ionicons name="cloud-download-sharp" size={size} color={color} />;
+          }
+          return null;
+        },
+      })}
     >
       <Tab.Screen
         name="DashboardScreen"
         component={DashboardScreen}
-        options={{ tabBarLabel: '🏠' }}
+        options={{ title: 'Dashboard' }}
       />
       <Tab.Screen
         name="FourthScreen"
         component={FourthScreen}
-        options={{ tabBarLabel: '🚌' }}
+        options={{ title: 'Buses' }}
       />
       <Tab.Screen
         name="FifthScreen"
         component={FifthScreen}
-        options={{ tabBarLabel: '📍' }}
+        options={{ title: 'Routes' }}
       />
       <Tab.Screen
         name="SixthScreen"
         component={SixthScreen}
-        options={{ tabBarLabel: '📥' }}
+        options={{ title: 'Offline' }}
       />
     </Tab.Navigator>
   );
@@ -74,7 +98,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Second" component={SecondScreen} />
         <Stack.Screen name="Welcome" component={Welcome} />
-        {/* 👇 After onboarding/Second/Welcome, user enters tabs */}
+        {/* 👇 After onboarding, user enters tabs */}
         <Stack.Screen name="MainTabs" component={MainTabs} />
       </Stack.Navigator>
     </NavigationContainer>
