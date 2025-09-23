@@ -34,11 +34,11 @@ export default function DashboardScreen() {
           />
         </View>
 
-        <View style={styles.nearbyCard}>
+        {/*<View style={styles.nearbyCard}>
           <Text style={styles.nearbyText}>{t("routesAvailable")}</Text>
-        </View>
+        </View>*/}
 
-        <FlatList
+        {/*<FlatList
           data={buses}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
@@ -47,7 +47,7 @@ export default function DashboardScreen() {
               <Text>{item.route}</Text>
             </View>
           )}
-        />
+        />*/}
       </ImageBackground>
     </View>
   );
